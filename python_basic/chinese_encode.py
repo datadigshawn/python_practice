@@ -1,1 +1,1 @@
-#chinese encode
+#chinese encode unicode utf8 
