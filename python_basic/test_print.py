@@ -89,3 +89,17 @@ print T1[6]
 print T1[-2]
 print T1[5:9]
 print len(T2)
+
+"""
+py2exe
+"""
+from distutils.core import setup
+import py2exe
+#windows or console
+setup(windows=["check_button.py"])
+
+"""
+OPEN EXTERNAL PROGRAM
+"""
+import os
+os.startfile("""file directory""")
