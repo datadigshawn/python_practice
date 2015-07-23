@@ -28,11 +28,11 @@ print WorkSheet
 #filepath=unicode(filepath,'utf8')
 sheet_ranges = wb[WorkSheet]
 
-#Read Cells and Print
-for i in range(1300,1320,1):
-     Val=("K" + str(i))
+#Read the values of  cells in worksheet
+for i in range(1,5,1):
+     Val=("A" + str(i))
      print(sheet_ranges[Val].value)
-     Val2=("C" + str(i))
+     Val2=("B" + str(i))
      print(sheet_ranges[Val2].value)
      values = (sheet_ranges[Val2].value)
      arr.append(values)
