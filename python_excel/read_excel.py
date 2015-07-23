@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#Open file dialog => Print all worksheets => Choose worksheet => Read Value
 from openpyxl import load_workbook
 from array import *
 import Tkinter
