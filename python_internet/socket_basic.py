@@ -1,3 +1,4 @@
+#FQDN = A fully qualified domain name
 import socket
 #get Host IP by Name
 googleIP=socket.gethostbyname('google.com.hk')
