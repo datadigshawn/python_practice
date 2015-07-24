@@ -71,17 +71,7 @@ def FirstBox():
     
     return PathArr
             
-def SecondBox():
-    PathArr2=[]
-    #Read Second List Value
-    filepath = "V:\\09-Final Price Data Bank\\A-電器"
-    filepath=unicode(filepath,'utf8')
-    os.chdir(filepath)
-    for root, dirs, files in os.walk(".", topdown=False):
-        for name in files:
-            PathArr2.append(name)
-    
-    return PathArr2
+
 def onSelect(val):
         SListValue=[]
         sender = val.widget
