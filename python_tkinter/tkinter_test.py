@@ -28,4 +28,15 @@ scrollbar.config( command = mylist.yview )
 SelectedVal=Label(root, text=0, textvariable=var).pack()
 
 mainloop()
-        
+
+"""
+List all folder  in specified path
+
+"""
+# -*- coding: utf-8 -*-
+import os 
+filepath=""" Specified Path"""
+filepath=unicode(filepath,'utf8')
+dirs = os.listdir( filepath )        
+for file in dirs:
+   print file
