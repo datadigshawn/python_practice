@@ -16,3 +16,5 @@ mlabel = Label(mGui, text = 'My label').pack()
 mbutton = Button(mGui, text = 'OK', command = mhello, fg = 'red', bg = 'blue').pack()
 
 mEntry = Entry(mGui, textvariable = ment).pack()
+
+mGui.mainloop()
