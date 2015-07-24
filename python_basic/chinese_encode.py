@@ -29,3 +29,9 @@ print StrDEUtf8String
 utfutfString=StrDEUtf8String.encode("utf-8")
 print type(StrDEUtf8String), " [encode utf-8]  =>", type(utfutfString)
 print utfutfString
+
+#BIG5
+text = '\xa5\xfa\xc5\xd6\xb7\xd3\xa9\xfa\xacI\xa4u'
+text1=text.decode("BIG5")
+print text1
+
