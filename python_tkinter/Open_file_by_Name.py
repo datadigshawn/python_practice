@@ -92,10 +92,30 @@ def GetPath(val):
     return
 #Open the External File
 def openfile(val):
+    #Get the Third Stage Value
     anchor = val.widget
     index = anchor.curselection()
     value = anchor.get(index)
-    print value
+    #First Stage Path
+    filepath = "V:\\09-Final Price Data Bank"
+    filepath=unicode(filepath,'utf8')
+    dirs = os.listdir( filepath )
+    for file in dirs:
+        matchObj = re.match("(^[A-Z]{1}[-])", file)
+        if matchObj:
+            find = str(file[0:1])
+            befind = str(value[0:1])
+            #Generate Second Stage Path
+            if find == befind:
+                FilterPath = ("%s\\%s" % (filepath, file))
+                os.chdir(FilterPath)
+                for root, dirs, files in os.walk(".", topdown=False):
+                    for targets in files:
+                        OpenPath = ("%s\\%s" % (FilterPath, value))
+
+    os.startfile(OpenPath)
+                        
+                        
     
 root = Tk()
 
