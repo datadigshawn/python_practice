@@ -1,16 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""
-ZetCode Tkinter tutorial
-
-This script shows a simple window
-on the screen.
-
-author: Jan Bodnar
-last modified: January 2011
-website: www.zetcode.com
-"""
 
 from Tkinter import Tk, Frame, BOTH
 
