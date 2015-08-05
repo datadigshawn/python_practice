@@ -6,7 +6,7 @@ from datetime import date, timedelta
 import time
 user = 'domain\\name'
 password = "*******"
-url = "http://www.ctci.com.tw/Acc_Rep/rate/rate.asp"
+url = "url"
 passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
 passman.add_password(None, url, user, password)
 # create the NTLM authentication handler
