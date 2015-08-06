@@ -40,16 +40,16 @@ def Add_New():
         INV1 = inputSql.get()
         INV2 = inputSql2.get()
         INV3 = inputSql3.get()
-        print YFilterS.cget("text")
-        print WeightS.cget("text")
-        print SeiveS.cget("text")
-        print S1S.cget("text")
-        print S2S.cget("text")
-        print BrandS.cget("text")
+        YFilter = YFilterS.cget("text")
+        Weight = WeightS.cget("text")
+        Sieve = SeiveS.cget("text")
+        Sub1 = S1S.cget("text")
+        Sub2 = S2S.cget("text")
+        BRAND = BrandS.cget("text")
         Icon = lite.connect('test.db')
         with Icon:
             Icur=Icon.cursor()
-            #Icur.execute("insert into com_release_valve(Code,Size,Price) values (?,?,?)",(INV1, INV2, INV3))
+            Icur.execute("insert into com_release_valve(Code,Size,Price,Weight,YFilter,Sieve,Sub1,Sub2,BRAND,Firm) values (?,?,?,?,?,?,?,?,?,?)",(INV1,INV2,INV3,Weight,YFilter,Sieve,Sub1,Sub2,BRAND,1))
             
     #clear F2 frame
     for child in F2.winfo_children():
@@ -83,8 +83,8 @@ def Add_New():
     #Table Drop Down List
     OPTIONS = ["NONE","YES","NO"]
     WOptions = ["組"]
-    S1Options = ["一般型", "一字型"]
-    S2Options = ["ST閘閥", "ST球閥"]
+    S1Options = ["一般", "一字型", "不鏽鋼", "雙本體"]
+    S2Options = ["ST閘閥型", "ST球閥型", "標準型", "銅閘閥型"]
     BOptions = ["RS"]
 
     #weight
