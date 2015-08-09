@@ -9,27 +9,24 @@ import Tkinter as tk
 import requests
 import requests
 import requests.auth
+from pyquery import PyQuery
+
 
 priceArr = []
       
-site= "https://www.lme.com/"
+site= "https://secure.lme.com/Data/Community/Login.aspx"
 hdr = {'User-Agent': 'Mozilla/5.0'}
-
-
+s = requests.Session()
+login_data = {
+    '_logIn:_userID': 'raykuo',
+    '_logIn:_password': 'InkL3#c7'
+}
+req1 = s.post(site, data=login_data)
 req = requests.get(site, headers = hdr, verify = False)
 #page = urllib2.urlopen(req)
 
-soup = BeautifulSoup(req.text, "html.parser")
-#print soup
+soup = BeautifulSoup(req1.text, "html.parser")
+print soup
 
 
-price = soup.findAll('tr')
-for tr in price:
-  
-  for thRow in tr.findAll('td'):
-    GotPrice = thRow.find(text=True)
-    GotPrice = str(GotPrice)
-    priceArr.append(GotPrice)
-print priceArr[3], priceArr[0], priceArr[5], priceArr[7]
-priceSelect = [priceArr[3], priceArr[0], priceArr[5], priceArr[7]]
-print priceSelect
+
