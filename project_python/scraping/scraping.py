@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from ntlm import HTTPNtlmAuthHandler
 from datetime import date, timedelta
 import time
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 class ScrapingInfo:
     def __init__(root, Surl, TableID):
@@ -204,9 +206,9 @@ class ScrapingCurrency:
     def __init__(root):
         root.CResultArr = []
     def CurrencySelect(root):
-        user = 'domain\\user'
-        password = "psword"
-        url = "url"
+        user = 'DOMAIL\\USRNAME'
+        password = "PASSWORD"
+        url = "WEBSITE"
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
         passman.add_password(None, url, user, password)
         # create the NTLM authentication handler
@@ -247,3 +249,41 @@ class ScrapingCurrency:
 """
 END of CURRENCY CLASSE
 """
+
+"""
+LME LOGIN
+"""
+class ScrapingLMELogin:
+    def __init__(root):
+        root.LMELogin = []
+    def LoginGetValue(root):
+        #login
+        from selenium import webdriver
+        from selenium.webdriver.common.keys import Keys
+        driver = webdriver.PhantomJS()
+        driver.get("https://secure.lme.com/Data/Community/Login.aspx")
+        driver.find_element_by_id('_logIn__userID').send_keys("USERNAME")
+        driver.find_element_by_id('_logIn__password').send_keys("PASSWORD")
+        driver.find_element_by_id('_logIn__logIn').click()
+        #enter the page
+        driver.find_element_by_id('_subMenu__dailyStocksPricesMetals').click()
+        date = driver.find_element_by_xpath("//*[@id='Table3']/tbody/tr[5]/td/table/tbody/tr[6]/td[1]").text
+        
+        Copper = driver.find_element_by_xpath("//*[@id='Table3']/tbody/tr[5]/td/table/tbody/tr[7]/td[8]").text
+        Aluminium = driver.find_element_by_xpath("//*[@id='Table3']/tbody/tr[5]/td/table/tbody/tr[7]/td[6]").text
+        Nickel = driver.find_element_by_xpath("//*[@id='Table3']/tbody/tr[5]/td/table/tbody/tr[7]/td[12]").text
+        Zinc = driver.find_element_by_xpath("//*[@id='Table3']/tbody/tr[5]/td/table/tbody/tr[7]/td[16]").text
+        #print date
+        #print Copper, Aluminium, Nickel, Zinc
+        date1 = date.encode("utf-8")
+        
+        dateConvert = ("%s-%s-%s"%(date1[11:], date1[8:10], date1[5:7]))
+        #print dateConvert
+        driver.quit()
+        LMELogin = (dateConvert, Copper.encode('utf-8'), Aluminium.encode('utf-8') ,Nickel.encode('utf-8'), Zinc.encode('utf-8'))
+        return LMELogin
+    
+"""
+END OF LME LOGIN
+"""
+
