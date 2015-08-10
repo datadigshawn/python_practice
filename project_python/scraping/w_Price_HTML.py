@@ -3,6 +3,40 @@ import datetime
 import sqlite3 as lite
 import array
 import scraping
+
+#Scrape Data
+lme = scraping.ScrapingLMELogin()
+lme.LoginGetValue()
+lmeValues =  lme.LoginGetValue()
+sh = scraping.ScrapingSHCopper()
+sh.SHGetValue()
+shValues = sh.SHGetValue()
+
+#TIME
+DailyNow= datetime.datetime.today()
+print DailyNow 
+print DailyNow.year
+mm = '{:02d}'.format(DailyNow.month)
+dd = '{:02d}'.format(DailyNow.day)
+date_stamp = ("%s-%s-%s"%(DailyNow.year,mm,dd))
+print date_stamp
+
+#fetch database n write to the html
+Hcon = lite.connect('daily_price.db')
+"""
+#get last two days (no weekend)
+monday -3,-4
+2 -1 -3
+(3,4,5) -1 -2
+
+with Hcon:
+    cur=Hcon.cursor()
+    sql_action=''
+    parameters = [date_stamp]
+    Hcon.execute(sql_action,parameters):
+"""
+        
+
 f = open('price.html','w')
 date = "date"
 copper = "copper"
@@ -14,12 +48,23 @@ message = """<html>
 <body style="font-family:'新細明體'; font-size:'24px'" >
 <p style="color:blue">各位長官好:</p>
 <p style="color:blue">LME國際金屬行情CASH BUYER價格(USD/TON):</p>
-<p style="color:#FF3399"><a>%s&nbsp&nbsp&nbsp 銅</a>
-<a>%s,鋁%s,鎳%s,鋅%s</a></p>
+<p style="color:#FF3399">
+<a>%s&nbsp&nbsp&nbsp 銅</a><a>%s,鋁%s,鎳%s,鋅%s</a></p>
+<p style="color:#FF3399">
+<a>%s&nbsp&nbsp&nbsp 銅</a><a>%s,鋁%s,鎳%s,鋅%s</a></p>
+
 <p style="color:blue">滬銅行情價格(CNY/TON):</p>
+<p style="color:#FF3399">%s&nbsp&nbsp%s</p>
 
 <p style="color:blue">美國西德州原油價格(USD/桶):</p>
-<p style="color:blue">前日匯率(2015/8/6)</p>
+<p style="color:#FF3399">%s&nbsp&nbsp 原油%s</p>
+<p style="color:#FF3399">%s&nbsp&nbsp 原油%s</p>
+
+<p style="color:blue">前日匯率(%s)</p>
+<p style="color:#FF3399">USD/TWD&nbsp&nbsp%s</p>
+<p style="color:#FF3399">CNY/TWD&nbsp&nbsp%s</p>
+<p style="color:#FF3399">JPY/TWD&nbsp&nbsp%s</p>
+<p style="color:#FF3399">EUR/TWD&nbsp&nbsp%s</p>
 <p style="color:blue">中鋼2015年第二季7月盤價:</p>
 <p style="color:blue">燁聯2015/7月份盤價:</p>
 <p style="color:blue">燁聯2015/7月份盤價:/<p>
@@ -45,21 +90,6 @@ message = """<html>
 f.write(message)
 f.close()
 
-lme = scraping.ScrapingLMELogin()
-lme.LoginGetValue()
-lmeValues =  lme.LoginGetValue()
-sh = scraping.ScrapingSHCopper()
-sh.SHGetValue()
-shValues = sh.SHGetValue()
-
-#time
-DailyNow= datetime.datetime.today()
-print DailyNow 
-print DailyNow.year
-mm = '{:02d}'.format(DailyNow.month)
-dd = '{:02d}'.format(DailyNow.day)
-date_stamp = ("%s-%s-%s"%(DailyNow.year,mm,dd))
-print date_stamp
 
 
 #SQLite
