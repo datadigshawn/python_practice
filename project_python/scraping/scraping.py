@@ -286,4 +286,54 @@ class ScrapingLMELogin:
 """
 END OF LME LOGIN
 """
-
+"""
+SHANG HAI COPPER
+"""
+class ScrapingSHCopper:
+    def __init__(root):
+        root.SHCopper = []
+    def SHGetValue(root):
+        import datetime
+        DailyNow= datetime.datetime.today()
+        yy = DailyNow.year
+        mm = '{:02d}'.format(DailyNow.month)
+        dd = '{:02d}'.format(DailyNow.day)
+        siteHome = "http://market.cnal.com/changjiang/"
+        site= "http://market.cnal.com/changjiang/2015/07-31/1438310372411596.shtml"
+        hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.125 Safari/537.36'}
+        reqHome = requests.get(siteHome, headers = hdr)
+        soupHome = BeautifulSoup(reqHome.text, "html.parser")
+        for ul in soupHome.find_all('ul', {"class": "obj-market-list"}):
+            for li in ul.find_all('li'):
+                for LinkTime in li.find_all('span',{"class":"time"}):
+                    PostDate=(LinkTime.text).encode('utf-8')
+                    PostYear = int(PostDate[0:4])  #numberic
+                    PostMM = PostDate[5:7]  #leading zero as string
+                    PostDD = PostDate[8:10]
+                    PostHR = int(PostDate[11:13])
+                    if (PostYear == yy) and (PostMM == mm) and (PostDD == dd) and (PostHR > 12):
+                        #Got today link
+                        for atag  in li.find_all('a'):
+                            Today_Link = (atag.get('href'))
+        #enter to the target page
+        req = requests.get(Today_Link, headers = hdr)
+        soup = BeautifulSoup(req.text, "html.parser")
+        trCount=0
+        tdCount=0
+        for div in soup.findAll('div', {"class": "marketcontent"}):
+          for table in div.findAll('table'):
+             for tr in table.findAll('tr'):
+                trCount += 1
+                if trCount == 2:
+                   for td in tr.findAll('td'):
+                      tdCount += 1
+                      if tdCount ==4:
+                         SHCopperPrice = (td.text).encode('utf-8')
+                         SHDate = ("%s-%s-%s" %(yy,mm,dd))
+                         SHDateutf8=SHDate.encode('utf-8')
+                         SHCopper = (SHDateutf8,SHCopperPrice)
+        return SHCopper
+        
+"""
+END OF SHANG HAI COPPER
+"""
