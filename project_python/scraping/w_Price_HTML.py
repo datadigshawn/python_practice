@@ -7,11 +7,11 @@ import re
 #Scrape Data
 
 
-
-
-
+SHtime=datetime.datetime.now()
+print SHtime.minute
+print SHtime.hour
 #fetch last day (not today)
-today = datetime.date.today( ) 
+today = datetime.date.today( ) + datetime.timedelta(days=1)
 ytd = today - datetime.timedelta(days=1)
 ymm =  '{:02d}'.format(ytd.month)
 ydd =  '{:02d}'.format(ytd.day)
@@ -69,17 +69,17 @@ f = open('price.html','w')
 
 message = """<html>
 <head><meta charset="UTF-8"></head>
-<body style="font-family:'新細明體'; font-size:'24px'" >
+<body style="font-family:'新細明體','Ariel'; font-size:'24px'" ><b>
 <p style="color:blue">各位長官好:</p>
 <p style="color:blue">LME國際金屬行情CASH BUYER價格(USD/TON):</p>"""
 message1="""<p style="color:#FF3399">
-<a>%s&nbsp&nbsp&nbsp 銅</a><a>%s,&nbsp鋁%s,&nbsp鎳%s,&nbsp鋅%s</a></p>
+<a>%s&nbsp&nbsp&nbsp 銅</a><a>%s,&nbsp&nbsp鋁%s,&nbsp&nbsp鎳%s,&nbsp&nbsp鋅%s</a></p>
 <p style="color:#FF3399">
-<a>%s&nbsp&nbsp&nbsp 銅</a><a>%s,&nbsp鋁%s,&nbsp鎳%s,&nbsp鋅%s</a></p>
+<a>%s&nbsp&nbsp&nbsp 銅</a><a>%s,&nbsp&nbsp鋁%s,&nbsp&nbsp鎳%s,&nbsp&nbsp鋅%s</a></p>
 <p style="color:blue">滬銅行情價格(CNY/TON):</p>
 <p style="color:#FF3399">%s&nbsp&nbsp%s</p>
 <p style="color:#FF3399">%s&nbsp&nbsp%s</p>
-"""%(date1,row1[2],row1[3],row1[4],row1[5],date2,row2[2],row2[3],row2[4],row2[5],date1,row1[6],date2,row2[6])
+"""%(date1,int(row1[2]),int(row1[3]),int(row1[4]),int(row1[5]),date2,int(row2[2]),int(row2[3]),int(row2[4]),int(row2[5]),date1,int(row1[6]),date2,int(row2[6]))
 message2 = """
 <p style="color:blue">美國西德州原油價格(USD/桶):</p>
 <p style="color:#FF3399">%s&nbsp&nbsp 原油&nbsp%s</p>
@@ -105,7 +105,7 @@ message3="""<p style="color:blue">中鋼2015年第二季7月盤價:</p>
 <p style="color:blue">請參考.</p>
 <p style="color:blue">(以上資料由專案管理部提供)</p>
 
-
+</b>
 </body>
 </html>
 
@@ -117,6 +117,37 @@ f.write(message1)
 f.write(message2)
 f.write(message3)
 f.close()
+###write into excel
+
+from openpyxl import Workbook
+from openpyxl import load_workbook
+filename = 'sample.xlsx'
+wb = load_workbook(filename)
+
+
+# grab the active worksheet
+ws = wb.active
 
 
 
+# Rows can also be appended
+exceldate = row1[1]
+YDATSlice = re.split('[-]', row1[1])
+print YDATSlice
+EXCELInDate = ("%s/%s/%s"%(YDATSlice[0],YDATSlice[1],YDATSlice[2]))
+print EXCELInDate
+ws['A2']=EXCELInDate
+ws['B2']=row1[2]
+ws['C2']=row1[3]
+ws['D2']=row1[4]
+ws['E2']=row1[5]
+ws['F2']=row1[6]
+ws['G2']=row1[7]
+ws['H2']=row1[8]
+ws['I2']=row1[11]
+ws['J2']=row1[9]
+ws['K2']=row1[10]
+
+
+# Save the file
+wb.save(filename)
