@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from ntlm import HTTPNtlmAuthHandler
 from datetime import date, timedelta
 import time
+import datetime
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
@@ -151,7 +152,7 @@ class ScrapingOil:
             DateVal = ''.join(node.findAll(text=True))
             #Put into Array
             if Idate >= 2 and Idate <=8:
-                DA.append([(Idate-1), DateVal])
+                DA.append([(Idate-1), (DateVal).encode('utf-8')])
         #fetch data
         for node in soup.findAll('td',align="left", bgcolor="#FFFCF7", colspan="2"):
             stringT =  ''.join(node.findAll(text=True))
@@ -163,7 +164,7 @@ class ScrapingOil:
                 PriceVal = tdNum.find(text=True)
                 #Put into Array
                 if IPrice >=1 and IPrice <=7:
-                    PA.append([IPrice, PriceVal])
+                    PA.append([IPrice, (PriceVal).encode('utf-8')])
         root.PriceArr = PA
         root.DateArr = DA
 
@@ -205,10 +206,11 @@ CURRENCY CLASSE
 class ScrapingCurrency:
     def __init__(root):
         root.CResultArr = []
+        root.Date = 0
     def CurrencySelect(root):
-        user = 'DOMAIL\\USRNAME'
-        password = "PASSWORD"
-        url = "WEBSITE"
+        user = 'domain\\username'
+        password = "password"
+        url = "http://www.ctci.com.tw/Acc_Rep/rate/rate.asp"
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
         passman.add_password(None, url, user, password)
         # create the NTLM authentication handler
@@ -230,22 +232,42 @@ class ScrapingCurrency:
         # retrieve the result
         parser = response.read()
         soup = BeautifulSoup(parser, "html.parser")
+        #fetch last day (not today)
+        today = datetime.date.today( )
+        ytd = today - datetime.timedelta(days=1)
+        ymm =  '{:02d}'.format(ytd.month)
+        ydd =  '{:02d}'.format(ytd.day)
+        divYdate = ("%s%s%s"%(ytd.year,ymm,ydd))
+
+            
+
         #get today weekday
         yWeekday = date.today().weekday()
         cc = (1, 17, 4, 13)
         count = 0  #can fit yesterday
         t = 0
-        for table in soup.findAll('table', align="left", border="0", cellpadding="3", cellspacing="0"):
-            count += 1
-            if count == yWeekday:
-                #list the currency 
-                for title in table.findAll('td', {'class':'DET2'}):
-                    t += 1
-                    #choose the currency from cc USD JPY EUR CNY
-                    for checkcc in cc:
-                        if ((checkcc*5)-3) == t:
-                            Cvalue = title.text
-                            root.CResultArr.append(Cvalue)
+        
+        divArr=[]
+        for divcheck in soup.findAll('div'):
+            div_Class = (divcheck.get('id')).encode('utf8')
+            if div_Class[0:3] == "div":
+                divArr.append(div_Class)
+        
+        LastDiv = divArr[-1]
+        #convert to date
+        root.Date = ("%s-%s-%s"%(LastDiv[3:7],LastDiv[7:9],LastDiv[9:]))
+                   
+
+        for div in soup.findAll('div'):
+            if LastDiv == (div.get('id')).encode('utf8'):
+                for table in div.findAll('table', align="left", border="0", cellpadding="3", cellspacing="0"):
+                    for title in table.findAll('td', {'class':'DET2'}):
+                        t += 1
+                        #choose the currency from cc USD JPY EUR CNY
+                        for checkcc in cc:
+                            if ((checkcc*5)-3) == t:
+                                Cvalue = (title.text).encode('utf-8')
+                                root.CResultArr.append(Cvalue)
 """
 END of CURRENCY CLASSE
 """
@@ -262,8 +284,8 @@ class ScrapingLMELogin:
         from selenium.webdriver.common.keys import Keys
         driver = webdriver.PhantomJS()
         driver.get("https://secure.lme.com/Data/Community/Login.aspx")
-        driver.find_element_by_id('_logIn__userID').send_keys("USERNAME")
-        driver.find_element_by_id('_logIn__password').send_keys("PASSWORD")
+        driver.find_element_by_id('_logIn__userID').send_keys("username")
+        driver.find_element_by_id('_logIn__password').send_keys("password")
         driver.find_element_by_id('_logIn__logIn').click()
         #enter the page
         driver.find_element_by_id('_subMenu__dailyStocksPricesMetals').click()
@@ -286,6 +308,7 @@ class ScrapingLMELogin:
 """
 END OF LME LOGIN
 """
+
 """
 SHANG HAI COPPER
 """
