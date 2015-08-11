@@ -10,11 +10,14 @@ lme = scraping.ScrapingLMELogin()
 lme.LoginGetValue()
 lmeValues =  lme.LoginGetValue()
 
-"""
-sh = scraping.ScrapingSHCopper()
-sh.SHGetValue()
-shValues = sh.SHGetValue()
-"""
+SHtime=datetime.datetime.now()
+SHmin = SHtime.minute
+SHhour = SHtime.hour
+if SHhour >= 16 and SHmin>=1:
+    sh = scraping.ScrapingSHCopper()
+    sh.SHGetValue()
+    shValues = sh.SHGetValue()
+
 oil = scraping.ScrapingOil()
 oil.WTexasOil()
 
@@ -107,22 +110,22 @@ with con:
         sql_LME_InsertDate = 'INSERT INTO daily(Record_Date) VALUES (?)'
         con.execute(sql_LME_InsertDate, LME_parameters)
         con.execute(sql_LMEupdate,LME_Upparameters)
-    """
-    #option after 15 pm 
-    #update ShangHai Copper Price
-    sql_SHaction='SELECT Record_Date FROM daily WHERE Record_Date=?'
-    sql_SHupdate='UPDATE daily SET Shang_Hai_Copper=? WHERE Record_Date=?'
-    SH_parameters = [shValues[0]]
-    SH_Upparameters = [shValues[1], shValues[0]]
-    for row in con.execute(sql_SHaction, SH_parameters):
-        print "find",row[0]
-        con.execute(sql_SHupdate,SH_Upparameters)
-        break
-    else:
-        sql_SH_InsertDate = 'INSERT INTO daily(Record_Date) VALUES (?)'
-        con.execute(sql_SH_InsertDate, SH_parameters)
-        con.execute(sql_SHupdate,SH_Upparameters)
-    """
+    
+    if SHhour >= 16 and SHmin>=1:
+        #update ShangHai Copper Price
+        sql_SHaction='SELECT Record_Date FROM daily WHERE Record_Date=?'
+        sql_SHupdate='UPDATE daily SET Shang_Hai_Copper=? WHERE Record_Date=?'
+        SH_parameters = [shValues[0]]
+        SH_Upparameters = [shValues[1], shValues[0]]
+        for row in con.execute(sql_SHaction, SH_parameters):
+            print "find",row[0]
+            con.execute(sql_SHupdate,SH_Upparameters)
+            break
+        else:
+            sql_SH_InsertDate = 'INSERT INTO daily(Record_Date) VALUES (?)'
+            con.execute(sql_SH_InsertDate, SH_parameters)
+            con.execute(sql_SHupdate,SH_Upparameters)
+    
     #update CURRENCY
     CUR = currency.CResultArr
     sql_CURaction='SELECT Record_Date FROM daily WHERE Record_Date=?'
