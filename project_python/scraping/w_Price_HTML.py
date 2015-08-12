@@ -11,7 +11,7 @@ SHtime=datetime.datetime.now()
 print SHtime.minute
 print SHtime.hour
 #fetch last day (not today)
-today = datetime.date.today( ) + datetime.timedelta(days=1)
+today = datetime.date.today( )
 ytd = today - datetime.timedelta(days=1)
 ymm =  '{:02d}'.format(ytd.month)
 ydd =  '{:02d}'.format(ytd.day)
@@ -69,7 +69,7 @@ f = open('price.html','w')
 
 message = """<html>
 <head><meta charset="UTF-8"></head>
-<body style="font-family:'新細明體','Ariel'; font-size:'24px'" ><b>
+<body style="font-family:'新細明體','Ariel'; font-size:'21px'" ><b>
 <p style="color:blue">各位長官好:</p>
 <p style="color:blue">LME國際金屬行情CASH BUYER價格(USD/TON):</p>"""
 message1="""<p style="color:#FF3399">
@@ -117,7 +117,7 @@ f.write(message1)
 f.write(message2)
 f.write(message3)
 f.close()
-###write into excel
+#write into excel
 
 from openpyxl import Workbook
 from openpyxl import load_workbook
