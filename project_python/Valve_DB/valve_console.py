@@ -13,7 +13,8 @@ F1 = Frame(root)
 F1.grid(row=0, column=0)
 F2 = Frame(root)
 F2.grid(row=0, column=1)
-
+F3 = Frame(root)
+F3.grid(row=1, column=1)
 
 def hello():
     #L1=Label(root, font = "Helvetica 12", text="hi")
@@ -83,8 +84,9 @@ def Add_New():
     #Table Drop Down List
     OPTIONS = ["NONE","YES","NO"]
     WOptions = ["組"]
-    S1Options = ["一般", "一字型", "不鏽鋼", "雙本體"]
-    S2Options = ["ST閘閥型", "ST球閥型", "標準型", "銅閘閥型"]
+    S1Options = ["NONE","一般", "一字型", "不鏽鋼", "雙本體"]
+    conOptions =["NONE","內牙","法蘭"]
+    S2Options = ["NONE","ST閘閥型", "ST球閥型", "標準型", "銅閘閥型"]
     BOptions = ["RS"]
 
     #weight
@@ -188,7 +190,100 @@ def GetValue():
        child.destroy()
     cut= Label(F2, text = "0")
     cut.grid(row=0, column=0)
+def Filter_Valve():
+    GETArr=[]
     
+    
+    #refresh Frame F2
+    for child in F2.winfo_children():
+       child.destroy()
+    #def Entry
+    def EntryIn(row, col, text):
+
+        InputE = StringVar()
+        EOil = Entry(F2, width=10, font = "Helvetica 8",  textvariable=InputE, state='readonly', borderwidth=0)   
+        EOil.grid(row=row, column=col)
+        InputE.set(text)
+    def EntryInF3(row, col, text):
+
+        InputE = StringVar()
+        EOil = Entry(F3, width=10, font = "Helvetica 8",  textvariable=InputE, state='readonly', borderwidth=0)   
+        EOil.grid(row=row, column=col)
+        InputE.set(text)
+    row_name=['Code','Size','Weight','Price','YFilter','Sieve','Connector','Sub1','Sub2','BRAND','Firm']
+    #print Name on it
+    for name in row_name:
+        col  = row_name.index(name)
+        EntryIn(1,col,name)
+    #drop down list
+    #Size
+    def DropDown(r,c,cate):
+        options=[]
+        #select distinct
+        con = lite.connect('test.db')
+        with con:
+            cur=con.cursor()
+            sql_action=('SELECT DISTINCT %s FROM com_release_valve'% (cate))
+            optionSQL = con.execute(sql_action)
+            for op in optionSQL:
+                options.append(op)
+        variableW = StringVar(F2)
+        variableW.set(options[0]) # default value
+        WeightS = apply(OptionMenu, (F2, variableW) + tuple(options))
+        WeightS.grid(row=r, column=c)
+        return WeightS
+    def get():
+        for child in F3.winfo_children():
+            child.destroy()
+        rel=[]
+        for i in range(0,10):
+            rel.append(GETArr[i].cget("text"))
+        print rel
+        FilterSelect=[]
+        FilterIndex=[]
+        rowNameIndex=(-1)
+        #except none
+        for result in rel:
+            rowNameIndex += 1 #row name index
+            if result != 'None':
+                FilterSelect.append(result)  #filter conditon   
+                FilterIndex.append(row_name[rowNameIndex])  #sql row name
+                
+        print FilterSelect, FilterIndex
+       
+        # conbine the select condition
+        ConditionShead = '=? AND '.join(map(str,FilterIndex))
+        ConditionS = ('%s=?'%(ConditionShead))
+        
+        print ConditionS
+        Scon = lite.connect('test.db')
+        with Scon:
+            cur=Scon.cursor()
+            filter_action=('SELECT * FROM com_release_valve WHERE %s'% (ConditionS))
+            filter_para = FilterSelect
+            optionSQL = con.execute(filter_action,filter_para)
+            printFrow=5
+            for Fresult in optionSQL:
+                printFrow += 1
+                for Fcol in Fresult:
+                    print Fcol, Fresult.index(Fcol)
+                    EntryInF3(printFrow,Fresult.index(Fcol),Fcol)
+
+
+    #list All dropdown list
+    for name in row_name:
+        ddcol= row_name.index(name)
+        
+        GETArr.append(DropDown(2,ddcol,name))
+
+    #submit button
+    But1 = Button(F2, command = get, text="enter")
+    But1.grid(row = 3, column = 1)
+    #sql select for print tilte
+    con = lite.connect('test.db')
+    with con:
+        cur=con.cursor()
+        sql_action='SELECT * FROM com_release_valuev'
 menubar = Menu(root)
 
 # create a pulldown menu, and add it to the menu bar
@@ -203,7 +298,7 @@ menubar.add_cascade(label="File", menu=filemenu)
 editmenu = Menu(menubar, tearoff=0)
 editmenu.add_command(label="減壓閥", command=value_db)
 editmenu.add_command(label="ADD", command=Add_New)
-editmenu.add_command(label="鎳", command=hello)
+editmenu.add_command(label="SELECT", command=Filter_Valve)
 editmenu.add_command(label="錫", command=hello)
 editmenu.add_command(label="鉛", command=hello)
 menubar.add_cascade(label="閥", menu=editmenu)
