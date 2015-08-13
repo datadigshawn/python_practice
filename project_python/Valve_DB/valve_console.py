@@ -5,7 +5,7 @@ import requests
 import array
 import sqlite3 as lite
 import sys
-
+import pyperclip
 root = Tk()
 root.geometry('500x500+500+300')
 #Frame
@@ -236,40 +236,70 @@ def Filter_Valve():
         for child in F3.winfo_children():
             child.destroy()
         rel=[]
+        excelcopier=[]
+        excelpaster=[]
+        #copy size from excel
+        c=str(pyperclip.paste())
+        clipGet=c.rstrip().split('\r\n')
+        for cal in clipGet:
+            excelcopier.append(int(cal))
+
         for i in range(0,10):
             rel.append(GETArr[i].cget("text"))
         print rel
-        FilterSelect=[]
-        FilterIndex=[]
-        rowNameIndex=(-1)
-        #except none
-        for result in rel:
-            rowNameIndex += 1 #row name index
-            if result != 'None':
-                FilterSelect.append(result)  #filter conditon   
-                FilterIndex.append(row_name[rowNameIndex])  #sql row name
+
+
+        """
+        loop for every excel value
+        """
+        for coSize in excelcopier:
+            #got select condition
+            
+            
+            rel[1]=coSize  #replace size to the excel value
+            FilterSelect=[]
+            FilterIndex=[]
+            rowNameIndex=(-1)
+            #except none
+            for result in rel:
+                rowNameIndex += 1 #row name index
+                if result != 'None':
+                    FilterSelect.append(result)  #filter conditon   
+                    FilterIndex.append(row_name[rowNameIndex])  #sql row name
+                    
+            print FilterSelect, FilterIndex
+           
+            # conbine the select condition
+            ConditionShead = '=? AND '.join(map(str,FilterIndex))
+            ConditionS = ('%s=?'%(ConditionShead))
+            
+            print ConditionS
+            Scon = lite.connect('test.db')
+            with Scon:
+                cur=Scon.cursor()
+                Size_action = ('SELECT Size From com_release_valve WHERE Size=?')
+                Size_para = [coSize]
+                filter_action=('SELECT * FROM com_release_valve WHERE %s'% (ConditionS))
+                filter_para = FilterSelect
+                #check if size exists
+                for checkSize in con.execute(filter_action,filter_para):
+                    
                 
-        print FilterSelect, FilterIndex
-       
-        # conbine the select condition
-        ConditionShead = '=? AND '.join(map(str,FilterIndex))
-        ConditionS = ('%s=?'%(ConditionShead))
-        
-        print ConditionS
-        Scon = lite.connect('test.db')
-        with Scon:
-            cur=Scon.cursor()
-            filter_action=('SELECT * FROM com_release_valve WHERE %s'% (ConditionS))
-            filter_para = FilterSelect
-            optionSQL = con.execute(filter_action,filter_para)
-            printFrow=5
-            for Fresult in optionSQL:
-                printFrow += 1
-                for Fcol in Fresult:
-                    print Fcol, Fresult.index(Fcol)
-                    EntryInF3(printFrow,Fresult.index(Fcol),Fcol)
-
-
+                    optionSQL = con.execute(filter_action,filter_para)
+                    printFrow=5
+                    for Fresult in optionSQL:
+                        printFrow += 1
+                        for Fcol in Fresult:
+                            print Fcol, Fresult.index(Fcol)
+                            EntryInF3(printFrow,Fresult.index(Fcol),Fcol)
+                    excelpaster.append(Fresult[4])
+                    break
+                else:
+                    excelpaster.append(0)
+        #paste result to clipbroad
+        PasteStr = '\n'.join(map(str,excelpaster))
+        pyperclip.copy(PasteStr)
+        pyperclip.paste()
     #list All dropdown list
     for name in row_name:
         ddcol= row_name.index(name)
