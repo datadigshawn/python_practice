@@ -6,8 +6,9 @@ import array
 import sqlite3 as lite
 import sys
 import pyperclip
+import textConvertor
 root = Tk()
-root.geometry('500x500+500+300')
+root.geometry('850x300+500+300')
 #Frame
 F1 = Frame(root)
 F1.grid(row=0, column=0)
@@ -16,11 +17,10 @@ F2.grid(row=0, column=1)
 F3 = Frame(root)
 F3.grid(row=1, column=1)
 
-
 def Filter_Valve():
     GETArr=[]
-
-
+    
+    
     #refresh Frame F2
     for child in F2.winfo_children():
        child.destroy()
@@ -28,13 +28,13 @@ def Filter_Valve():
     def EntryIn(row, col, text):
 
         InputE = StringVar()
-        EOil = Entry(F2, width=10, font = "Helvetica 8",  textvariable=InputE, state='readonly', borderwidth=0)
+        EOil = Entry(F2, width=10, font = "Helvetica 8",  textvariable=InputE, state='readonly', borderwidth=0)   
         EOil.grid(row=row, column=col)
         InputE.set(text)
     def EntryInF3(row, col, text):
 
         InputE = StringVar()
-        EOil = Entry(F3, width=10, font = "Helvetica 8",  textvariable=InputE, state='readonly', borderwidth=0)
+        EOil = Entry(F3, width=10, font = "Helvetica 8",  textvariable=InputE, state='readonly', borderwidth=0)   
         EOil.grid(row=row, column=col)
         InputE.set(text)
     row_name=['Code','Size','Weight','Price','YFilter','Sieve','Connector','Sub1','Sub2','BRAND','Firm']
@@ -66,11 +66,15 @@ def Filter_Valve():
         excelcopier=[]
         excelpaster=[]
         #copy size from excel
+        c=pyperclip.paste()
+        Input = textConvertor.Vavle_Text()
+        excelcopier = Input.Action(c)
+        """
         c=str(pyperclip.paste())
         clipGet=c.rstrip().split('\r\n')
         for cal in clipGet:
             excelcopier.append(int(cal))
-
+        """
         for i in range(0,10):
             rel.append(GETArr[i].cget("text"))
         print rel
@@ -81,8 +85,8 @@ def Filter_Valve():
         """
         for coSize in excelcopier:
             #got select condition
-
-
+            
+            
             rel[1]=coSize  #replace size to the excel value
             FilterSelect=[]
             FilterIndex=[]
@@ -91,15 +95,15 @@ def Filter_Valve():
             for result in rel:
                 rowNameIndex += 1 #row name index
                 if result != 'None':
-                    FilterSelect.append(result)  #filter conditon
+                    FilterSelect.append(result)  #filter conditon   
                     FilterIndex.append(row_name[rowNameIndex])  #sql row name
-
+                    
             print FilterSelect, FilterIndex
-
+           
             # conbine the select condition
             ConditionShead = '=? AND '.join(map(str,FilterIndex))
             ConditionS = ('%s=?'%(ConditionShead))
-
+            
             print ConditionS
             Scon = lite.connect('test.db')
             with Scon:
@@ -110,8 +114,8 @@ def Filter_Valve():
                 filter_para = FilterSelect
                 #check if size exists
                 for checkSize in con.execute(filter_action,filter_para):
-
-
+                    
+                
                     optionSQL = con.execute(filter_action,filter_para)
                     printFrow=5
                     for Fresult in optionSQL:
@@ -130,7 +134,7 @@ def Filter_Valve():
     #list All dropdown list
     for name in row_name:
         ddcol= row_name.index(name)
-
+        
         GETArr.append(DropDown(2,ddcol,name))
 
     #submit button
@@ -141,13 +145,19 @@ def Filter_Valve():
     with con:
         cur=con.cursor()
         sql_action='SELECT * FROM com_release_valuev'
-# MENUBAR
 menubar = Menu(root)
 
+# create a pulldown menu, and add it to the menu bar
 filemenu = Menu(menubar, tearoff=0)
-filemenu.add_command(label="Valve", command=Filter_Valve)
+filemenu.add_command(label="AutoFill", command=Filter_Valve)
+
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=root.quit)
-menubar.add_cascade(label="AutoFill", menu=filemenu)
+menubar.add_cascade(label="Valve", menu=filemenu)
+
+
+
+# display the menu
 root.config(menu=menubar)
+root.iconbitmap(r'C:\Python2.7.10\project_database\query\com_release_value\autofill.ico')
 mainloop()
