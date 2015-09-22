@@ -30,7 +30,7 @@ if not os.path.exists(newpath): os.makedirs(newpath)
 
 #directory_path = "\\\Ecs01\\pj_est\\2015-TWN\\31-14Q2289A 日勝生大橋頭國小聯開案機電工程\\02估價資料\\02廠商報價\\2015- 廠商報價"
 #directory_path="C:\Python2.7.10\project_database\excel_database"
-directory_path="P:\\DEPT\\採購發包歷史檔\\13P\\13CP1322A_台中捷運北屯線CJ930A\\Final Price"
+directory_path="P:\\DEPT\\採購發包歷史檔\\13P\\13CP1400A 台北文化體育園區大型室內體育館新建工程\\Final Price\\NC3A.01 變電站配電設備"
 directory_path=unicode(directory_path,'utf8')
 
 for pathinfile, subdirs, files in os.walk(directory_path):
@@ -69,7 +69,14 @@ for pathinfile, subdirs, files in os.walk(directory_path):
             print dstroot,tempName, "read"
             os.chdir(dstroot)
             print os.getcwd()
-            book_dict = pyexcel.get_book_dict(file_name=tempName, path=dstroot)
+            while True:
+                try:
+                    book_dict = pyexcel.get_book_dict(file_name=tempName, path=dstroot)
+                    break
+                except ValueError:
+                    os.remove(TempNewNamePath)
+                    print "Oops!  That was no valid number.  Try again..."
+            #book_dict = pyexcel.get_book_dict(file_name=tempName, path=dstroot)
             #isinstance(book_dict, OrderedDict)
             con = lite.connect('database.db')
             with con:
@@ -129,12 +136,4 @@ for pathinfile, subdirs, files in os.walk(directory_path):
             os.remove(TempNewNamePath)
             
 
-"""
-with con:
-    cur=con.cursor()
-    search="SELECT * FROM excel_content WHERE Cell_Data LIKE '%廠商名%'"
-    for result in con.execute(search):
-        print result
-        for rel in result:
-            print rel
-"""
+
