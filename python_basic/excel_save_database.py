@@ -30,18 +30,20 @@ if not os.path.exists(newpath): os.makedirs(newpath)
 
 #directory_path = "\\\Ecs01\\pj_est\\2015-TWN\\31-14Q2289A 日勝生大橋頭國小聯開案機電工程\\02估價資料\\02廠商報價\\2015- 廠商報價"
 #directory_path="C:\Python2.7.10\project_database\excel_database"
-directory_path="P:\\DEPT\\採購發包歷史檔\\13P\\13CP1400A 台北文化體育園區大型室內體育館新建工程\\Final Price\\NC3A.01 變電站配電設備"
+directory_path="V:\\09-Final Price Data Bank\\F-一般閥件(特殊閥)"
 directory_path=unicode(directory_path,'utf8')
-
+fileNum=0
 for pathinfile, subdirs, files in os.walk(directory_path):
     for name in files:
         fileEXT = os.path.splitext(name)[1]
-        
-        if fileEXT == '.xls' or fileEXT== '.xlsx':
+        fileNum+=1
+        print fileNum , "exception"
+        if (fileEXT == '.xls' or fileEXT== '.xlsx') and fileNum>=88:
             if fileEXT=='.xls':
                 tempName='123.xls'
             if fileEXT=='.xlsx':
                 tempName='123.xlsx'
+            
             
             
             oldNamePath = os.path.join(pathinfile,name)
