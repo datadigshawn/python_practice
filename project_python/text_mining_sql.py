@@ -42,7 +42,7 @@ Data_fetchArr=[]
 con = lite.connect('database.db')
 with con:
     cur=con.cursor()
-    get_cell="SELECT Cell_Data From excel_content WHERE ID>80000 and ID<=90000"
+    get_cell="SELECT Cell_Data From excel_content WHERE ID>90000 and ID<=100000"
     #850985
     for c in con.execute(get_cell):
         Data_fetchArr.append(c[0])
